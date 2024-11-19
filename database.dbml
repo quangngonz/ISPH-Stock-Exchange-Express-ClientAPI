@@ -1,0 +1,74 @@
+Table Users {
+  user_id varchar [pk]
+  username varchar [unique]
+  house varchar
+  points_balance int
+  user_role user_role [default: 'student']
+}
+
+Table Stocks {
+  stock_ticker char(3) [pk]
+  stock_name varchar [unique]
+  full_name varchar
+  initial_price float
+  current_price float
+  total_volume int
+  volume_available int
+  market_cap float
+  sector varchar
+  price_noise_factor float
+}
+
+Table StockPriceHistory {
+  price_history_id varchar [pk]
+  stock_ticker char(3) [ref: > Stocks.stock_ticker]
+  price float
+  timestamp datetime
+  volume_traded int
+  event_id varchar [ref: > Events.event_id, note: 'Optional, links to specific events']
+}
+
+Table Portfolio {
+  portfolio_id varchar [pk]
+  user_id varchar [ref: > Users.user_id]
+  stock_ticker char(3) [ref: > Stocks.stock_ticker]
+  quantity int
+  points_balance int
+}
+
+Table Transactions {
+  transaction_id varchar [pk]
+  user_id varchar [ref: > Users.user_id]
+  stock_ticker char(3) [ref: > Stocks.stock_ticker]
+  quantity int
+  transaction_type transaction_type
+  price_per_unit float
+  timestamp datetime
+}
+
+Table Earnings {
+  earning_id varchar [pk]
+  user_id varchar [ref: > Users.user_id]
+  points int
+  code varchar
+  timestamp datetime
+}
+
+Table Events {
+  event_id varchar [pk]
+  created_by_user_id varchar [ref: > Users.user_id]
+  stocks_impacted varchar [note: 'Impacted house, null for general events']
+  evaluation text
+  timestamp datetime
+}
+
+enum transaction_type {
+  buy
+  sell
+}
+
+enum user_role {
+  student
+  teacher
+  admin
+}
