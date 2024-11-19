@@ -60,6 +60,7 @@ Table Events {
   stocks_impacted varchar [note: 'Impacted house, null for general events']
   evaluation text
   timestamp datetime
+  processed bool
 }
 
 enum transaction_type {
