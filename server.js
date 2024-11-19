@@ -9,6 +9,9 @@ const {
   set,
   push,
 } = require('firebase/database');
+const admin = require('firebase-admin');
+
+const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -28,6 +31,14 @@ const firebaseApp = initializeApp(firebaseConfig);
 const database = getDatabase(firebaseApp);
 const auth = getAuth(firebaseApp);
 
+const serviceAccount = require('./serviceAccountKey.json');
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: process.env.FIREBASE_DATABASE_URL,
+  });
+}
+
 const app = express();
 app.use(express.json()); // Built-in body parser
 app.use(cors());
@@ -46,6 +57,36 @@ const authenticate = async (req, res, next) => {
     res.status(401).send('Invalid or expired token');
   }
 };
+
+// Middleware: Role Check
+const authorizeRole =
+  (...roles) =>
+  async (req, res, next) => {
+    const userId = req.user?.uid; // Assuming req.user is set by authentication middleware
+    if (!userId) {
+      return res.status(401).send('Unauthorized: User not authenticated.');
+    }
+
+    try {
+      const userRef = ref(database, `users/${userId}/role`);
+      const snapshot = await get(userRef);
+
+      if (!snapshot.exists()) {
+        return res.status(403).send('Access denied: Role not found.');
+      }
+
+      const userRole = snapshot.val();
+
+      if (!roles.includes(userRole)) {
+        return res.status(403).send('Access denied: Insufficient permissions.');
+      }
+
+      next(); // User is authorized, proceed to the next middleware/handler
+    } catch (error) {
+      console.error('Error authorizing role:', error.message);
+      res.status(500).send('Internal server error.');
+    }
+  };
 
 // Route: Fetch Stocks
 app.get('/stocks', async (req, res) => {
@@ -288,6 +329,129 @@ app.get('/transactions/:userId?', async (req, res) => {
     res.status(500).send('Failed to fetch transactions');
   }
 });
+
+// Route: Add event [Teacher]
+app.post(
+  '/teacher/add-event',
+  authenticate,
+  authorizeRole('teacher'),
+  async (req, res) => {
+    const { eventDetails } = req.body;
+
+    if (!eventDetails) {
+      return res.status(400).send('Invalid request: Missing event details.');
+    }
+
+    // Check if the required fields are present
+    const requiredFields = ['event_name', 'event_description'];
+    const missingFields = requiredFields.filter(
+      (field) => !eventDetails[field]
+    );
+
+    if (missingFields.length) {
+      return res
+        .status(400)
+        .send(`Missing required fields: ${missingFields.join(', ')}`);
+    }
+
+    if (!eventDetails['evaluation']) {
+      eventDetails['evaluation'] = 'No evaluation';
+    }
+
+    try {
+      await db.collection('Events').add({
+        ...eventDetails,
+        created_by_user_id: req.user.uid,
+        approved: false,
+        processed: false,
+        timestamp: admin.firestore.Timestamp.now(),
+      });
+      res.send('Event added successfully.');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Failed to add event.');
+    }
+  }
+);
+
+// Route: Approve event [Admin]
+app.post(
+  '/admin/approve-event',
+  authenticate,
+  authorizeRole('admin'),
+  async (req, res) => {
+    const { eventId } = req.body;
+
+    if (!eventId) {
+      return res.status(400).send('Invalid request: Missing event ID.');
+    }
+
+    try {
+      const eventRef = db.collection('Events').doc(eventId);
+      await eventRef.update({ approved: true });
+      res.send('Event approved successfully.');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Failed to approve event.');
+    }
+  }
+);
+
+// Route: Set opening price [Admin]
+app.post(
+  '/admin/set-opening-price',
+  authenticate,
+  authorizeRole('admin'),
+  async (req, res) => {
+    const { stockTicker, price } = req.body;
+
+    if (!stockTicker || !price) {
+      return res
+        .status(400)
+        .send('Invalid request: Missing stock ticker or price.');
+    }
+
+    try {
+      await db.collection('Stocks').doc(stockTicker).update({
+        initial_price: price,
+        current_price: price,
+      });
+      res.send('Opening price set successfully.');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Failed to set opening price.');
+    }
+  }
+);
+
+// Route: Adjust stock volume [Admin]
+app.post(
+  '/admin/adjust-volume',
+  authenticate,
+  authorizeRole('admin'),
+  async (req, res) => {
+    const { stockTicker, volumeChange } = req.body;
+
+    if (!stockTicker || volumeChange === undefined) {
+      return res
+        .status(400)
+        .send('Invalid request: Missing stock ticker or volume change.');
+    }
+
+    try {
+      await db
+        .collection('Stocks')
+        .doc(stockTicker)
+        .update({
+          volume_available: admin.firestore.FieldValue.increment(volumeChange),
+        });
+      res.send('Stock volume adjusted successfully.');
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Failed to adjust volume.');
+    }
+  }
+);
 
 const PORT = 3000;
 app.listen(PORT, () => {
