@@ -36,9 +36,9 @@ const swaggerDocs = swaggerJsdoc(swaggerOptions);
 
 app.use(cors());
 app.use(express.json());
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.get('/', (req, res) => res.redirect('/api-docs'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use('/admin', adminRoutes);
 app.use('/stocks', stocksRoutes);
