@@ -29,7 +29,7 @@ const swaggerOptions = {
       },
     },
   },
-  apis: ['./routes/*.js'], // Path to the API routes where JSDoc is written
+  apis: ['./routes/*.js'],
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOptions);
@@ -38,7 +38,7 @@ app.use(cors());
 app.use(express.json());
 
 const CSS_URL =
-  'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui.min.css';
+  'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css';
 
 app.get('/', (req, res) => res.redirect('/api-docs'));
 app.use(
