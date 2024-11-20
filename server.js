@@ -12,6 +12,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => res.send('ISPH_SSE API'));
+
 app.use('/admin', adminRoutes);
 app.use('/stocks', stocksRoutes);
 app.use('/teacher', teacherRoutes);
