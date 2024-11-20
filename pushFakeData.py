@@ -81,7 +81,8 @@ def random_date_within_last_3_months():
     today = datetime.now()
     start_date = today - timedelta(days=90)  # Approximate 3 months
     random_days = random.randint(0, 90)  # Random number of days within 3 months
-    return (start_date + timedelta(days=random_days)).isoformat()
+    random_seconds = random.randint(0, 86400)  # Random number of seconds within a day
+    return (start_date + timedelta(days=random_days, seconds=random_seconds)).isoformat()
 
 # Generate fake transactions
 def generate_transactions(num_transactions=20):
