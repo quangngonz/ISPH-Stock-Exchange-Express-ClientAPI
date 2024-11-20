@@ -38,7 +38,14 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => res.redirect('/api-docs'));
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocs, {
+    swaggerUrl:
+      'https://cdn.jsdelivr.net/npm/swagger-ui-dist@3.52.0/swagger-ui-bundle.js',
+  })
+);
 
 app.use('/admin', adminRoutes);
 app.use('/stocks', stocksRoutes);
