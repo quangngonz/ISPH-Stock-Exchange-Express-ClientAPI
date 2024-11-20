@@ -15,7 +15,7 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'My API',
+      title: 'ISPH Stock Exchange API',
       version: '1.0.0',
       description: 'API documentation for ISPH-SSE',
     },
@@ -37,8 +37,15 @@ const swaggerDocs = swaggerJsdoc(swaggerOptions);
 app.use(cors());
 app.use(express.json());
 
+const CSS_URL =
+  'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.18.2/swagger-ui.min.css';
+
 app.get('/', (req, res) => res.redirect('/api-docs'));
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocs, { customCssUrl: CSS_URL })
+);
 
 app.get('/api-docs/swagger.json', (req, res) => {
   res.json(swaggerDocs);
