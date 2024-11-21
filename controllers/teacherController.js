@@ -1,3 +1,4 @@
+const { event } = require('firebase-functions/v1/analytics');
 const { admin, database: db } = require('../services/firebaseService');
 
 const addEvent = async (req, res) => {
@@ -17,8 +18,17 @@ const addEvent = async (req, res) => {
       .send(`Missing required fields: ${missingFields.join(', ')}`);
   }
 
+  var evalutation = {
+    system: '',
+    teacher: '',
+    admin: '',
+  };
+
   if (!eventDetails['evaluation']) {
-    eventDetails['evaluation'] = 'No evaluation';
+    eventDetails['evaluation'] = evalutation;
+  } else {
+    evalutation['teacher'] = eventDetails['evaluation'];
+    eventDetails['evaluation'] = evalutation;
   }
 
   try {
