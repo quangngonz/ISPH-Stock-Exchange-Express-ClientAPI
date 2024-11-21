@@ -1,4 +1,3 @@
-const { event } = require('firebase-functions/v1/analytics');
 const { admin, database: db } = require('../services/firebaseService');
 
 const addEvent = async (req, res) => {
