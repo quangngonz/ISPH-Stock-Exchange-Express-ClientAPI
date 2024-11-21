@@ -11,7 +11,7 @@ const approveEvent = async (req, res) => {
   try {
     const eventRef = db.collection('Events').doc(eventId);
     await eventRef.update({ approved: true });
-    await eventRef.update({ processed: false });
+    await eventRef.update({ evaluated: false });
     res.send('Event approved successfully.');
   } catch (err) {
     console.error(err);

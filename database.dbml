@@ -64,6 +64,7 @@ Table Events {
   timestamp datetime
   approved bool
   processed bool
+  evaluated bool
 }
 
 enum transaction_type {
