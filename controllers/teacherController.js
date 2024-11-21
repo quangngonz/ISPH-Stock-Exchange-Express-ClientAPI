@@ -36,6 +36,7 @@ const addEvent = async (req, res) => {
       created_by_user_id: req.user.uid,
       approved: false,
       processed: false,
+      triggered: false,
       timestamp: admin.firestore.Timestamp.now(),
     });
     res.send('Event added successfully.');
