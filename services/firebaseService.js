@@ -39,4 +39,6 @@ if (!admin.apps.length) {
   });
 }
 
-module.exports = { firebaseApp, database, auth, admin };
+const db = admin.database();
+
+module.exports = { firebaseApp, database, db, auth, admin };
