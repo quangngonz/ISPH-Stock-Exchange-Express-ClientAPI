@@ -1,5 +1,5 @@
-//TODO: Modularize the code
 const { admin, database: db } = require('../services/firebaseService');
+const { addTask } = require('../queues/evaluateEventQueue');
 
 const approveEvent = async (req, res) => {
   const { eventId } = req.body;
@@ -12,7 +12,9 @@ const approveEvent = async (req, res) => {
     const eventRef = db.collection('Events').doc(eventId);
     await eventRef.update({ approved: true });
     await eventRef.update({ evaluated: false });
-    res.send('Event approved successfully.');
+
+    const task = addTask(eventId);
+    res.send(`Event approved successfully. Task ID: ${task.id}`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Failed to approve event.');
