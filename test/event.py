@@ -2,6 +2,7 @@ import requests
 
 # Define the API endpoint
 url = "http://localhost:3000/teacher/add-event"  # Replace with your actual endpoint URL
+# url = "https://isph-sse.vercel.app/teacher/add-event"  # Replace with your actual endpoint URL
 
 # Test cases
 test_cases = [

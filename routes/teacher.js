@@ -4,28 +4,11 @@ const authorizeRole = require('../middleware/roleMiddleware');
 
 const router = express.Router();
 
-const {
-  addEvent,
-  getEventEval,
-  getEvalResults,
-} = require('../controllers/teacherController');
+const { addEvent } = require('../controllers/teacherController');
 
 // Route for adding an event
 // router.post('/add-event', authenticate, authorizeRole('teacher'), addEvent);
 router.post('/add-event', addEvent);
-
-router.get(
-  '/event/:eventId',
-  authenticate,
-  authorizeRole('teacher'),
-  getEventEval
-);
-router.get(
-  '/task/:taskId',
-  authenticate,
-  authorizeRole('teacher'),
-  getEvalResults
-);
 
 // Export the router
 module.exports = router;

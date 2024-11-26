@@ -1,5 +1,5 @@
-const { admin, database: db } = require('../services/firebaseService');
-const { addTask } = require('../queues/evaluateEventQueue');
+const { admin, db } = require('../services/firebaseService');
+const { evaluateEvent } = require('../services/evaluateEventService');
 
 const approveEvent = async (req, res) => {
   const { eventId } = req.body;
@@ -9,11 +9,11 @@ const approveEvent = async (req, res) => {
   }
 
   try {
-    const eventRef = db.collection('Events').doc(eventId);
+    const eventRef = db.ref(`events/${eventId}`);
     await eventRef.update({ approved: true });
-    await eventRef.update({ evaluated: false });
+    await eventRef.update({ processed: false });
 
-    const task = addTask(eventId);
+    const task = await evaluateEvent(eventId);
     res.send(`Event approved successfully. Task ID: ${task.id}`);
   } catch (err) {
     console.error(err);
