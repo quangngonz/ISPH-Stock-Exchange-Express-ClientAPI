@@ -1,8 +1,8 @@
 import requests
 
 # Define the API endpoint
-url = "http://localhost:3000/teacher/add-event"  # Replace with your actual endpoint URL
-# url = "https://isph-sse.vercel.app/teacher/add-event"  # Replace with your actual endpoint URL
+# url = "http://localhost:3000/teacher/add-event"  # Replace with your actual endpoint URL
+url = "https://isph-sse.vercel.app/teacher/add-event"  # Replace with your actual endpoint URL
 
 # Test cases
 test_cases = [
@@ -11,7 +11,7 @@ test_cases = [
         "payload": {
             "eventDetails": {
                 "event_name": "Science Fair",
-                "event_description": "Annual science fair event for students. with Rua Bien being the host"
+                "event_description": "Annual science fair event for students. with Rua Bien being the host and Voi being the winner of the science fair.",
             },
             "user": {"uid": "asdfasferfasdfasrfasrfasrf"}
         },

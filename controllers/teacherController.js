@@ -47,6 +47,7 @@ const addEvent = async (req, res) => {
       approved: false,
       processed: false,
       evaluated: false,
+      projection: {},
       timestamp: admin.database.ServerValue.TIMESTAMP,
     });
 
