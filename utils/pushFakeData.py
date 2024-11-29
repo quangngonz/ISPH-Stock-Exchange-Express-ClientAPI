@@ -104,14 +104,24 @@ def generate_transactions(num_transactions=20):
         transaction_id = str(uuid.uuid4())
         transactions_ref.child(transaction_id).set(transaction_data)
 
-if __name__ == "__main__":
-    print("Generating fake data...")
-    generate_users()
-    generate_stocks()
-    stocks = stocks_ref.get()
-    if stocks:
-        for ticker in stocks.keys():
-            generate_price_history(ticker)
-    generate_portfolios()
-    generate_transactions()
-    print("Fake data generation completed!")
+# if __name__ == "__main__":
+#     print("Generating fake data...")
+#     generate_users()
+#     generate_stocks()
+#     stocks = stocks_ref.get()
+#     if stocks:
+#         for ticker in stocks.keys():
+#             generate_price_history(ticker)
+#     generate_portfolios()
+#     generate_transactions()
+#     print("Fake data generation completed!")
+
+
+stocks = stocks_ref.get()
+user_id = "QHrWvCXzryfIPze5dUzyVVOES4f1"
+
+portfolios_ref.child(user_id).set({ "points_balance": 500})
+
+portfolio_items_ref = portfolios_ref.child(user_id).child("items")
+for stock_ticker in random.sample(list(stocks.keys()), k=4):
+    portfolio_items_ref.child(stock_ticker).set({"quantity": random.randint(1, 50)})

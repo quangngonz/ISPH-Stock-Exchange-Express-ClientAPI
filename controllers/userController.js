@@ -5,14 +5,15 @@ const getUserPortfolio = async (req, res) => {
   const { userId } = req.params;
 
   try {
-    // Get all portfolios
-    const portfolioRef = ref(database, 'portfolios');
-    const snapshot = await get(portfolioRef);
+    // Reference to the user's portfolio directly if using structured paths
+    const userPortfolioRef = ref(database, `portfolios/${userId}`);
+    const snapshot = await get(userPortfolioRef);
 
     if (!snapshot.exists()) {
-      return res.status(404).send('No portfolio found');
+      return res.status(404).send('No portfolio found for this user');
     }
 
+    // Respond with the filtered portfolio data
     res.json(snapshot.val());
   } catch (error) {
     console.error('Error fetching portfolio:', error.message);
