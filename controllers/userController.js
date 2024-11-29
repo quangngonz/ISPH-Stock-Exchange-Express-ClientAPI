@@ -13,14 +13,6 @@ const getUserPortfolio = async (req, res) => {
       return res.status(404).send('No portfolio found');
     }
 
-    // Loop through portfolios to find the user's portfolio with matching user_id
-    snapshot.forEach((childSnapshot) => {
-      const portfolio = childSnapshot.val();
-      if (portfolio.user_id === userId) {
-        return res.json(portfolio);
-      }
-    });
-
     res.json(snapshot.val());
   } catch (error) {
     console.error('Error fetching portfolio:', error.message);
