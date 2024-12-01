@@ -67,6 +67,13 @@ Table Events {
   evaluated bool
 }
 
+Table EngineWeights {
+  engine_data varchar [pk]
+  event_id varchar [ref: > Events.event_id]
+  time_affected integer
+  evaluation text [note: 'JSON string']
+}
+
 enum transaction_type {
   buy
   sell
