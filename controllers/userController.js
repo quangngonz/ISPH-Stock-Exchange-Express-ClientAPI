@@ -23,7 +23,7 @@ const getUserPortfolio = async (req, res) => {
 
     // for each item in the user's portfolio, get the stock details
     const stockList = ref(database, 'stocks');
-    const stockSnapshot = await get(stockList).val();
+    const stockSnapshot = await get(stockList);
 
     stockTickers.forEach((key) => {
       const stockData = stockSnapshot[key];
