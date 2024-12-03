@@ -60,7 +60,7 @@ Table Events {
   stocks_impacted varchar [note: 'Impacted house, null for general events']
   event_name varchar
   event_description text
-  evaluation text
+  evaluation text [note: 'JSON string {stock_ticker: points_affected}']
   timestamp datetime
   approved bool
   processed bool

@@ -12,9 +12,35 @@ const getUserPortfolio = async (req, res) => {
     if (!snapshot.exists()) {
       return res.status(404).send('No portfolio found for this user');
     }
+    const userPortfolioData = snapshot.val();
+    const stockTickers = Object.keys(userPortfolioData['items']);
+
+    const response = {
+      user_id: userId,
+      items: {},
+      point_balance: userPortfolioData['point_balance'],
+    }
+
+    // for each item in the user's portfolio, get the stock details
+    const stockList = ref(database, 'stocks');
+    const stockSnapshot = await get(stockList).val();
+
+    stockTickers.forEach((key) => {
+      const stockData = stockSnapshot[key];
+      const stockSector = stockData['sector'];
+      const stockPrice = stockData['current_price'];
+      const evaluation = stockPrice * userPortfolioData['items'][key];
+
+      response.items[key] = {
+        stockSector: stockSector,
+        quantity: userPortfolioData['items'][key],
+        evaluation: evaluation,
+        currentPrice: stockPrice,
+      };
+    });
 
     // Respond with the filtered portfolio data
-    res.json(snapshot.val());
+    res.json(response);
   } catch (error) {
     console.error('Error fetching portfolio:', error.message);
     res.status(500).send('Failed to fetch portfolio');
