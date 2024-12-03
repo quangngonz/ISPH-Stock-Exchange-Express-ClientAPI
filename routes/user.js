@@ -19,7 +19,7 @@ module.exports = router;
 
 /**
  * @swagger
- * user/transactions:
+ * /user/transactions:
  *   get:
  *     summary: Get all transactions or transactions by a specific user
  *     description: Fetches all transactions or those of a specific user based on user ID.
@@ -43,7 +43,7 @@ module.exports = router;
 
 /**
  * @swagger
- * user/portfolio/{userId}:
+ * /user/portfolio/{userId}:
  *   get:
  *     summary: Get the portfolio of a specific user
  *     description: Fetches the portfolio details of a user by their user ID.
