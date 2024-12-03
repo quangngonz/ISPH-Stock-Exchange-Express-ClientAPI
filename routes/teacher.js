@@ -19,7 +19,7 @@ module.exports = router;
  *   - name: Teacher
  *     description: Operations related to teachers
  * paths:
- *   teacher/add-event:
+ *   /teacher/add-event:
  *     post:
  *       tags:
  *         - Teacher
