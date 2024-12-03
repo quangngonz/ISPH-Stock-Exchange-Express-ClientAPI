@@ -18,7 +18,7 @@ const getUserPortfolio = async (req, res) => {
     const response = {
       user_id: userId,
       items: {},
-      point_balance: userPortfolioData['point_balance'],
+      point_balance: userPortfolioData['points_balance'],
     }
 
     // for each item in the user's portfolio, get the stock details
