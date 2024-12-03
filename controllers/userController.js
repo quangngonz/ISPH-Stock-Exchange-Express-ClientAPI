@@ -31,11 +31,11 @@ const getUserPortfolio = async (req, res) => {
       const stockData = allStocks[key];
       const stockSector = stockData['sector'];
       const stockPrice = stockData['current_price'];
-      const evaluation = stockPrice * userPortfolioData['items'][key];
+      const evaluation = stockPrice * userPortfolioData['items'][key]['quantity'];
 
       response.items[key] = {
         stockSector: stockSector,
-        quantity: userPortfolioData['items'][key],
+        quantity: userPortfolioData['items'][key]['quantity'],
         evaluation: evaluation,
         currentPrice: stockPrice,
       };
