@@ -25,8 +25,10 @@ const getUserPortfolio = async (req, res) => {
     const stockList = ref(database, 'stocks');
     const stockSnapshot = await get(stockList);
 
+    const allStocks = stockSnapshot.val();
+
     stockTickers.forEach((key) => {
-      const stockData = stockSnapshot[key];
+      const stockData = allStocks[key];
       const stockSector = stockData['sector'];
       const stockPrice = stockData['current_price'];
       const evaluation = stockPrice * userPortfolioData['items'][key];
