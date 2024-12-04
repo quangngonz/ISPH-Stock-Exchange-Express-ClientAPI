@@ -1,5 +1,5 @@
-const { database } = require('../services/firebaseService');
-const { ref, get } = require('firebase/database');
+const { database, admin } = require('../services/firebaseService');
+const { ref, get, set} = require('firebase/database');
 
 const getUserPortfolio = async (req, res) => {
   const { userId } = req.params;
@@ -71,4 +71,27 @@ const checkIfUserExists = async (req, res) => {
   }
 }
 
-module.exports = { getUserPortfolio,  checkIfUserExists};
+const createUser = async (req, res) => {
+  const { userId, house, username } = req.body;
+
+  const userRecord = admin.auth().getUser(userId);
+
+  const userData = {
+    user_id: userId,
+    full_name: userRecord.displayName,
+    house: house,
+    username: username || `User ${userId}`,
+    role: 'student'
+  }
+
+  try {
+    const userRef = ref(database, `users/${userId}`);
+    await set(userRef, userData);
+    res.status(201).send('User created successfully');
+  } catch (error) {
+    console.error('Error creating user:', error.message);
+    res.status(500).send('Failed to create user');
+  }
+}
+
+module.exports = { getUserPortfolio,  checkIfUserExists, createUser};

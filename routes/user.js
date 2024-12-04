@@ -2,12 +2,13 @@ const express = require('express');
 
 const router = express.Router();
 
-const { getUserPortfolio, checkIfUserExists } = require('../controllers/userController');
+const { getUserPortfolio, checkIfUserExists, createUser } = require('../controllers/userController');
 const { getTransactions } = require('../controllers/transactionController');
 
 router.get('/transactions', getTransactions);
 router.get('/portfolio/:userId', getUserPortfolio);
 router.get('/check-user/:userId', checkIfUserExists);
+router.post('/create-user', createUser);
 
 module.exports = router;
 
@@ -109,4 +110,48 @@ module.exports = router;
  *             schema:
  *               type: string
  *               example: Failed to check user
+ */
+
+/**
+ * @swagger
+ * /user/create-user:
+ *   post:
+ *     summary: Create a new user in the database
+ *     description: Creates a new user record with the provided details.
+ *     tags:
+ *       - User
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: The unique identifier of the user.
+ *                 example: "MYID1234"
+ *               house:
+ *                 type: string
+ *                 description: The house assigned to the user.
+ *                 example: "Rua Bien"
+ *               username:
+ *                 type: string
+ *                 description: The username for the user. Defaults to `User {userId}` if not provided.
+ *                 example: "quangngo"
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: User created successfully
+ *       500:
+ *         description: Failed to create user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Failed to create user
  */
