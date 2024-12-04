@@ -68,9 +68,8 @@ Table Events {
 }
 
 Table EngineWeights {
-  engine_data varchar [pk]
-  event_id varchar [ref: > Events.event_id]
-  time_affected integer
+  event_id varchar [pk] [ref: > Events.event_id]
+  projection integer
   evaluation text [note: 'JSON string']
 }
 

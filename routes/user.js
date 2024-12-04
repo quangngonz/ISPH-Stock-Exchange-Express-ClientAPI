@@ -2,11 +2,12 @@ const express = require('express');
 
 const router = express.Router();
 
-const { getUserPortfolio } = require('../controllers/userController');
+const { getUserPortfolio, checkIfUserExists } = require('../controllers/userController');
 const { getTransactions } = require('../controllers/transactionController');
 
 router.get('/transactions', getTransactions);
 router.get('/portfolio/:userId', getUserPortfolio);
+router.get('/check-user/:userId', checkIfUserExists);
 
 module.exports = router;
 
@@ -63,4 +64,49 @@ module.exports = router;
  *         description: No portfolio found
  *       500:
  *         description: Failed to fetch portfolio
+ */
+
+/**
+ * @swagger
+ * /user/check-user/{userId}:
+ *   get:
+ *     summary: Check if a user exists in the database
+ *     description: This endpoint checks whether a user exists in the database by their userId.
+ *     tags:
+ *       - User
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: The unique identifier of the user to check.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User exists in the database.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 userFound:
+ *                   type: boolean
+ *                   example: true
+ *       404:
+ *         description: User does not exist in the database.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 userFound:
+ *                   type: boolean
+ *                   example: false
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: Failed to check user
  */

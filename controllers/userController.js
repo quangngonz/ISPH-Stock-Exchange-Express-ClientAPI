@@ -49,4 +49,26 @@ const getUserPortfolio = async (req, res) => {
   }
 };
 
-module.exports = { getUserPortfolio };
+const checkIfUserExists = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).send('Invalid request: Missing user ID.');
+  }
+
+  try {
+    const userRef = ref(database, `users/${userId}`);
+    const snapshot = await get(userRef);
+
+    if (!snapshot.exists()) {
+      return res.status(404).send({ userFound: false });
+    } else {
+      return res.status(200).send({ userFound: true });
+    }
+  } catch (error) {
+    console.error('Error checking user:', error.message);
+    res.status(500).send('Failed to check user');
+  }
+}
+
+module.exports = { getUserPortfolio,  checkIfUserExists};
