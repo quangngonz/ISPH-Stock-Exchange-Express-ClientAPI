@@ -48,6 +48,41 @@ const getUserPortfolio = async (req, res) => {
     res.status(500).send('Failed to fetch portfolio');
   }
 };
+const getUserPortfolioHistory = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    const userPortfolioRef = ref(database, `daily_portfolio_values`);
+    try {
+      const snapshot = await get(userPortfolioRef);
+
+      if (!snapshot.exists()) {
+        return res.status(404).send('No portfolio history found');
+      }
+
+      const allPortfolioHistory = snapshot.val();
+      return res.json(allPortfolioHistory);
+    } catch (error) {
+      console.error('Error fetching portfolio history:', error.message);
+      return res.status(500).send('Failed to fetch portfolio history');
+    }
+  }
+
+  try {
+    const userPortfolioRef = ref(database, `daily_portfolio_values/${userId}`);
+    const snapshot = await get(userPortfolioRef);
+
+    if (!snapshot.exists()) {
+      return res.status(404).send('No portfolio history found for this user');
+    }
+
+    const userPortfolioHistory = snapshot.val();
+    return res.json(userPortfolioHistory);
+  } catch (error) {
+    console.error('Error fetching portfolio history:', error.message);
+    return res.status(500).send('Failed to fetch portfolio history');
+  }
+};
 
 const checkIfUserExists = async (req, res) => {
   const { userId } = req.params;
@@ -94,4 +129,4 @@ const createUser = async (req, res) => {
   }
 }
 
-module.exports = { getUserPortfolio,  checkIfUserExists, createUser};
+module.exports = { getUserPortfolio, getUserPortfolioHistory, checkIfUserExists, createUser};
