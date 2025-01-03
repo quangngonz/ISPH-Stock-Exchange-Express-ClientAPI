@@ -132,10 +132,15 @@ This project is configured for deployment on Vercel. You can deploy it by connec
 
 The `test/event.py` script provides basic test cases for the `/teacher/add-event` endpoint. You can modify and expand these tests as needed.
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit pull requests or open issues to improve the project.
-
 ## License
 
 This project is licensed under the MIT License.
+
+## Contribution
+
+Contributions are welcome! Feel free to fork the repository, suggest improvements, or report issues.
+
+For inquiries, contact:
+
+- **School Email**: <quang.n.student@isph.edu.vn>
+- **Personal Email**: <quangngo.nz@gmail.com>
