@@ -41,15 +41,13 @@ const getTransactions = async (req, res) => {
 };
 // Unified function to buy and sell stocks
 const handleStockTransaction = async (req, res, transactionType) => {
-  const { stockTicker, quantity } = req.body;
-  const userId = req.user.uid;
-
+  const { stockTicker, quantity, userId } = req.body;
   if (!userId || !stockTicker || !quantity) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
   try {
-    const userRef = ref(database, `users/${userId}`);
+    const userRef = ref(database, `portfolios/${userId}`);
     const stockRef = ref(database, `stocks/${stockTicker}`);
     const portfolioRef = ref(database, `portfolios/${userId}/${stockTicker}`);
 
@@ -86,7 +84,7 @@ const handleStockTransaction = async (req, res, transactionType) => {
 
       // Update stock availability
       await update(stockRef, {
-        available_quantity: stock.available_quantity - quantity,
+        volume_available: stock.volume_available - quantity,
       });
 
     } else if (transactionType === 'sell') {
@@ -111,13 +109,13 @@ const handleStockTransaction = async (req, res, transactionType) => {
 
       // Update stock availability
       await update(stockRef, {
-        available_quantity: stock.available_quantity + quantity,
+        volume_available: stock.volume_available + quantity,
       });
     }
 
     // Log the transaction
     const transaction_id = uuidv4();
-    const transactionRef = ref(database, `transactions`).child(transaction_id);
+    const transactionRef = ref(database, `transactions/${transaction_id}`);
     await set(transactionRef, {
       user_id: userId,
       stock_ticker: stockTicker,
