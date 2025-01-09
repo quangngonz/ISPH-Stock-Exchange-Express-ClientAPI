@@ -1,5 +1,7 @@
 const { database } = require('../services/firebaseService');
-const { ref, get } = require('firebase/database');
+const { ref, get, set, update } = require('firebase/database');
+
+const { v4: uuidv4 } = require('uuid');
 
 const getTransactions = async (req, res) => {
   // Check if there is a specific user ID provided
@@ -37,74 +39,14 @@ const getTransactions = async (req, res) => {
     res.status(500).send('Failed to fetch transactions');
   }
 };
-
-const buyStocks = async (req, res) => {
+// Unified function to buy and sell stocks
+const handleStockTransaction = async (req, res, transactionType) => {
   const { stockTicker, quantity } = req.body;
   const userId = req.user.uid;
 
-  try {
-    const userRef = ref(database, `users/${userId}`);
-    const stockRef = ref(database, `stocks/${stockTicker}`);
-    const portfolioRef = ref(database, `portfolios/${userId}/${stockTicker}`);
-
-    // Fetch user and stock data
-    const [userSnapshot, stockSnapshot] = await Promise.all([
-      get(userRef),
-      get(stockRef),
-    ]);
-
-    if (!userSnapshot.exists() || !stockSnapshot.exists()) {
-      return res.status(404).send('User or stock not found');
-    }
-
-    const user = userSnapshot.val();
-    const stock = stockSnapshot.val();
-    const totalCost = stock.current_price * quantity;
-
-    if (user.points_balance < totalCost) {
-      return res.status(400).send('Insufficient points');
-    }
-
-    // Deduct points and update portfolio
-    await update(userRef, {
-      points_balance: user.points_balance - totalCost,
-    });
-
-    const portfolioSnapshot = await get(portfolioRef);
-    if (portfolioSnapshot.exists()) {
-      const currentQuantity = portfolioSnapshot.val().quantity;
-      await update(portfolioRef, {
-        quantity: currentQuantity + quantity,
-      });
-    } else {
-      await set(portfolioRef, { quantity });
-    }
-
-    // Update stock availability
-    await update(stockRef, {
-      available_quantity: stock.available_quantity - quantity,
-    });
-
-    // Log the transaction
-    const transactionId = push(ref(database, 'transactions')).key;
-    await set(ref(database, `transactions/${transactionId}`), {
-      user_id: userId,
-      stock_ticker: stockTicker,
-      quantity,
-      transaction_type: 'buy',
-      timestamp: Date.now(),
-    });
-
-    res.send('Stock purchased successfully');
-  } catch (error) {
-    console.error('Error processing transaction:', error.message);
-    res.status(500).send('Error processing transaction');
+  if (!userId || !stockTicker || !quantity) {
+    return res.status(400).json({ error: 'Missing required fields' });
   }
-};
-
-const sellStocks = async (req, res) => {
-  const { stockTicker, quantity } = req.body;
-  const userId = req.user.uid;
 
   try {
     const userRef = ref(database, `users/${userId}`);
@@ -119,48 +61,80 @@ const sellStocks = async (req, res) => {
     ]);
 
     if (!userSnapshot.exists() || !stockSnapshot.exists()) {
-      return res.status(404).send('User or stock not found');
+      return res.status(404).json({ error: 'User or stock not found' });
     }
 
     const user = userSnapshot.val();
     const stock = stockSnapshot.val();
-    const portfolio = portfolioSnapshot.val();
-
-    if (!portfolio || portfolio.quantity < quantity) {
-      return res.status(400).send('Insufficient stock quantity');
-    }
-
+    const portfolio = portfolioSnapshot.exists() ? portfolioSnapshot.val() : { quantity: 0 };
     const totalCost = stock.current_price * quantity;
 
-    // Add points and update portfolio
-    await update(userRef, {
-      points_balance: user.points_balance + totalCost,
-    });
+    if (transactionType === 'buy') {
+      // Check if user has enough balance
+      if (user.points_balance < totalCost) {
+        return res.status(400).json({ error: 'Insufficient points' });
+      }
 
-    await update(portfolioRef, {
-      quantity: portfolio.quantity + quantity,
-    });
+      // Deduct points and update portfolio
+      await update(userRef, {
+        points_balance: user.points_balance - totalCost,
+      });
 
-    // Update stock availability
-    await update(stockRef, {
-      available_quantity: stock.available_quantity - quantity,
-    });
+      await update(portfolioRef, {
+        quantity: portfolio.quantity + quantity,
+      });
+
+      // Update stock availability
+      await update(stockRef, {
+        available_quantity: stock.available_quantity - quantity,
+      });
+
+    } else if (transactionType === 'sell') {
+      // Check if user has enough stock
+      if (portfolio.quantity < quantity) {
+        return res.status(400).json({ error: 'Insufficient stock quantity' });
+      }
+
+      // Add points and update portfolio
+      await update(userRef, {
+        points_balance: user.points_balance + totalCost,
+      });
+
+      const newQuantity = portfolio.quantity - quantity;
+      if (newQuantity === 0) {
+        await set(portfolioRef, null); // Remove stock from portfolio if quantity is zero
+      } else {
+        await update(portfolioRef, {
+          quantity: newQuantity,
+        });
+      }
+
+      // Update stock availability
+      await update(stockRef, {
+        available_quantity: stock.available_quantity + quantity,
+      });
+    }
 
     // Log the transaction
-    const transactionId = push(ref(database, 'transactions')).key;
-    await set(ref(database, `transactions/${transactionId}`), {
+    const transaction_id = uuidv4();
+    const transactionRef = ref(database, `transactions`).child(transaction_id);
+    await set(transactionRef, {
       user_id: userId,
       stock_ticker: stockTicker,
       quantity,
-      transaction_type: 'sell',
+      transaction_type: transactionType,
       timestamp: Date.now(),
     });
 
-    res.send('Stock sold successfully');
+
+    res.json({ message: `Stock ${transactionType}ed successfully` });
   } catch (error) {
-    console.error('Error processing transaction:', error.message);
-    res.status(500).send('Error processing transaction');
+    console.error(`Error processing ${transactionType} transaction:`, error.message);
+    res.status(500).json({ error: `Failed to ${transactionType} stock` });
   }
 };
 
+// Endpoints for buying and selling stocks
+const buyStocks = (req, res) => handleStockTransaction(req, res, 'buy');
+const sellStocks = (req, res) => handleStockTransaction(req, res, 'sell');
 module.exports = { getTransactions, buyStocks, sellStocks };

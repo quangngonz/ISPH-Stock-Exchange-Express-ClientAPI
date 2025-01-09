@@ -132,6 +132,9 @@ module.exports = router;
  *           schema:
  *             type: object
  *             properties:
+ *               userId:
+ *                type: string
+ *                description: The user ID of the user buying the stock
  *               stockTicker:
  *                 type: string
  *                 description: The ticker symbol of the stock to be purchased
@@ -164,6 +167,9 @@ module.exports = router;
  *           schema:
  *             type: object
  *             properties:
+ *               userId:
+ *                type: string
+ *                description: The user ID of the user buying the stock
  *               stockTicker:
  *                 type: string
  *                 description: The ticker symbol of the stock to be sold

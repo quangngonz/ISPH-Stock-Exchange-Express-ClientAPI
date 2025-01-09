@@ -23,7 +23,8 @@
     "openai": "^4.73.0",
     "serve-favicon": "^2.5.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^4.6.2"
+    "swagger-ui-express": "^4.6.2",
+    "uuid": "^11.0.4"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
