@@ -39,7 +39,7 @@ const getTransactions = async (req, res) => {
     res.status(500).send('Failed to fetch transactions');
   }
 };
-// Unified function to buy and sell stocks
+
 const handleStockTransaction = async (req, res, transactionType) => {
   const { stockTicker, quantity, userId } = req.body;
   if (!userId || !stockTicker || !quantity) {
@@ -66,6 +66,11 @@ const handleStockTransaction = async (req, res, transactionType) => {
     const stock = stockSnapshot.val();
     const portfolio = portfolioSnapshot.exists() ? portfolioSnapshot.val() : { quantity: 0 };
     const totalCost = stock.current_price * quantity;
+
+    // Backup old data for rollback
+    const oldUserBalance = user.points_balance;
+    const oldStockVolume = stock.volume_available;
+    const oldPortfolioQuantity = portfolio.quantity;
 
     if (transactionType === 'buy') {
       // Check if user has enough balance
@@ -117,21 +122,52 @@ const handleStockTransaction = async (req, res, transactionType) => {
     const transaction_id = uuidv4();
     const transactionRef = ref(database, `transactions/${transaction_id}`);
     await set(transactionRef, {
+      timestamp: Date.now(),
       user_id: userId,
       stock_ticker: stockTicker,
       quantity,
       transaction_type: transactionType,
-      timestamp: Date.now(),
+      status: 'success',
     });
 
-    console.log(`Stock ${transactionType === "buy" ? "bought" : "sold"} successfully`)
-
+    console.log(`Stock ${transactionType === "buy" ? "bought" : "sold"} successfully`);
     res.json({ message: `Stock ${transactionType === "buy" ? "bought" : "sold"} successfully` });
+
   } catch (error) {
     console.error(`Error processing ${transactionType} transaction:`, error.message);
-    res.status(500).json({ error: `Failed to ${transactionType} stock ${error.message}` });
+
+    // Rollback to old state
+    try {
+      await update(userRef, { points_balance: oldUserBalance });
+      await update(stockRef, { volume_available: oldStockVolume });
+
+      if (oldPortfolioQuantity === 0) {
+        await set(portfolioRef, null);
+      } else {
+        await update(portfolioRef, { quantity: oldPortfolioQuantity });
+      }
+
+      // Log the transaction
+      const transaction_id = uuidv4();
+      const transactionRef = ref(database, `transactions/${transaction_id}`);
+      await set(transactionRef, {
+        timestamp: Date.now(),
+        user_id: userId,
+        stock_ticker: stockTicker,
+        quantity,
+        transaction_type: transactionType,
+        status: 'failed',
+      });
+
+      console.log(`Rolled back changes due to error during ${transactionType} transaction.`);
+    } catch (rollbackError) {
+      console.error('Failed to rollback changes:', rollbackError.message);
+    }
+
+    res.status(500).json({ error: `Failed to ${transactionType} stock. Error: ${error.message}` });
   }
 };
+
 
 // Endpoints for buying and selling stocks
 const buyStocks = (req, res) => handleStockTransaction(req, res, 'buy');
