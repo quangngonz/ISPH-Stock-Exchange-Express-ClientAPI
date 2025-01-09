@@ -48,6 +48,7 @@ const getUserPortfolio = async (req, res) => {
     res.status(500).send('Failed to fetch portfolio');
   }
 };
+
 const getUserPortfolioHistory = async (req, res) => {
   const { userId } = req.params;
 

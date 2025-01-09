@@ -124,6 +124,7 @@ const handleStockTransaction = async (req, res, transactionType) => {
       timestamp: Date.now(),
     });
 
+    console.log(`Stock ${transactionType === "buy" ? "bought" : "sold"} successfully`)
 
     res.json({ message: `Stock ${transactionType === "buy" ? "bought" : "sold"} successfully` });
   } catch (error) {
