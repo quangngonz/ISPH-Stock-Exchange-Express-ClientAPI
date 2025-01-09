@@ -130,7 +130,7 @@ const handleStockTransaction = async (req, res, transactionType) => {
     res.json({ message: `Stock ${transactionType}ed successfully` });
   } catch (error) {
     console.error(`Error processing ${transactionType} transaction:`, error.message);
-    res.status(500).json({ error: `Failed to ${transactionType} stock` });
+    res.status(500).json({ error: `Failed to ${transactionType} stock ${error.message}` });
   }
 };
 
