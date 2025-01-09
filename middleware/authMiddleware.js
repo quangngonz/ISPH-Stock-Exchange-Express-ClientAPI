@@ -10,7 +10,7 @@ const authenticate = async (req, res, next) => {
     const user = await admin.auth().verifyIdToken(token);
     req.user = user;
 
-    if (userId || userId !== user.uid) {
+    if (userId && userId !== user.uid) {
       return res.status(403).send('Unauthorized: Invalid user ID');
     } else if (userId) {
       console.log('User ID matches:', user.uid);
