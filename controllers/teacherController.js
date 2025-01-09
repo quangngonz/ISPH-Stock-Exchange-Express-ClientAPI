@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 const { evaluateEvent } = require('../services/evaluateEventService');
 
 const addEvent = async (req, res) => {
-  const { eventDetails, user } = req.body;
+  const { eventDetails, user } = req.params;
 
   if (!eventDetails) {
     return res.status(400).send('Invalid request: Missing event details.');
