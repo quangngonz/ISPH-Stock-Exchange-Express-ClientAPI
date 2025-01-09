@@ -18,10 +18,12 @@ router.get('/:stockTicker/history', stockHistory);
 router.get('/stock-history/:stockTicker?', stockHistory);
 
 // Route for buying stocks
-router.post('/buy-stock', authenticate, buyStocks);
+// router.post('/buy-stock', authenticate, buyStocks);
+router.post('/buy-stock', buyStocks);
 
 // Route for selling stocks
-router.post('/sell-stock', authenticate, sellStocks);
+// router.post('/sell-stock', authenticate, sellStocks);
+router.post('/sell-stock', sellStocks);
 
 module.exports = router;
 
