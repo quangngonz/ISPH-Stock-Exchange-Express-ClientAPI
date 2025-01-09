@@ -49,7 +49,7 @@ const handleStockTransaction = async (req, res, transactionType) => {
   try {
     const userRef = ref(database, `portfolios/${userId}`);
     const stockRef = ref(database, `stocks/${stockTicker}`);
-    const portfolioRef = ref(database, `portfolios/${userId}/${stockTicker}`);
+    const portfolioRef = ref(database, `portfolios/${userId}/items/${stockTicker}`);
 
     // Fetch user, stock, and portfolio data
     const [userSnapshot, stockSnapshot, portfolioSnapshot] = await Promise.all([
