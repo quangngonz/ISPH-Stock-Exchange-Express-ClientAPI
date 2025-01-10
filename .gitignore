@@ -129,6 +129,10 @@ dist
 .yarn/install-state.gz
 .pnp.*
 serviceAccountKey.json
+auth_secrets.json
+server.cert
+server.key
+
 .vercel
 .idea
 
