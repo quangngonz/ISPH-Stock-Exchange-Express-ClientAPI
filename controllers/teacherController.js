@@ -1,4 +1,5 @@
 const { admin, db } = require('../services/firebaseService');
+const { ref, get, set, update } = require('firebase/database');
 const { v4: uuidv4 } = require('uuid');
 
 const { evaluateEvent } = require('../services/evaluateEventService');
@@ -61,4 +62,61 @@ const addEvent = async (req, res) => {
   }
 };
 
-module.exports = { addEvent };
+const adjustVolume = async (req, res) => {
+  const {stockTicker, quantity, userId} = req.body;
+
+  if (!userId || !stockTicker || !quantity) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const stockRef = ref(`stocks/${stockTicker}`);
+
+  try {
+    const stockSnapshot = await get(stockRef);
+
+    if (!stockSnapshot.exists()) {
+      return res.status(404).json({ error: 'Stock not found' });
+    }
+
+    const stockData = stockSnapshot.val();
+    const updatedVolume = stockData.volume_available + quantity;
+
+    if(updatedVolume < 0) {
+      return res.status(400).json({ error: 'Invalid volume' });
+    }
+
+    await update(stockRef, { volume: updatedVolume });
+
+    res.json({ message: 'Volume updated successfully' });
+  } catch (error) {
+    console.error('Error updating volume:', error);
+    res.status(500).json({ error: 'Failed to update volume' });
+  }
+}
+
+const setVolume = async  (req, res) => {
+  const {stockTicker, volume} = req.body;
+
+  if (!stockTicker || !volume) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const stockRef = ref(`stocks/${stockTicker}`);
+
+  try {
+    const stockSnapshot = await get(stockRef);
+
+    if (!stockSnapshot.exists()) {
+      return res.status(404).json({ error: 'Stock not found' });
+    }
+
+    await set(stockRef, { volume_available: volume });
+
+    res.json({ message: 'Volume updated successfully' });
+  } catch (error) {
+    console.error('Error updating volume:', error);
+    res.status(500).json({ error: 'Failed to update volume' });
+  }
+}
+
+module.exports = { addEvent, adjustVolume, setVolume };
