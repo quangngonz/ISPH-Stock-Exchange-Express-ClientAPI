@@ -5,6 +5,8 @@ const authenticateAndAuthorizeRole =
   (...roles) =>
     async (req, res, next) => {
       const token = req.headers.authorization?.split('Bearer ')[1];
+      const { userId } = req.body;
+
       if (!token) {
         return res.status(401).send('Unauthorized: Missing Bearer token.');
       }
@@ -13,6 +15,10 @@ const authenticateAndAuthorizeRole =
         // Verify the token using Firebase Admin
         const user = await admin.auth().verifyIdToken(token);
         req.user = user;
+
+        if(userId && userId !== user.uid) {
+          return res.status(403).send('Unauthorized: Invalid user ID.');
+        }
 
         const userId = req.user?.uid;
         if (!userId) {

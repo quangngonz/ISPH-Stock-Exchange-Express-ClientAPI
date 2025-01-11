@@ -38,6 +38,7 @@ module.exports = router;
  *             required:
  *               - event_name
  *               - event_description
+ *               - userId
  *             properties:
  *               event_name:
  *                 type: string
@@ -48,6 +49,9 @@ module.exports = router;
  *               evaluation:
  *                 type: string
  *                 description: Evaluation criteria for the event (optional)
+ *               userId:
+ *                 type: string
+ *                 description: The ID of the user making the adjustment
  *       responses:
  *         200:
  *           description: Event added successfully
