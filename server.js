@@ -3,9 +3,12 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const cors = require('cors');
 const favicon = require('serve-favicon')
+const http = require('http');
 const path = require('path')
 
 require('dotenv').config();
+
+const createWebSocketServer = require('./services/webSocketServer');
 
 const adminRoutes = require('./routes/admin');
 const stocksRoutes = require('./routes/stocks');
@@ -13,6 +16,8 @@ const teacherRoutes = require('./routes/teacher');
 const userRoutes = require('./routes/user');
 
 const app = express();
+const server = http.createServer(app);
+
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 const swaggerOptions = {
@@ -59,13 +64,16 @@ app.get('/api-docs/swagger.json', (req, res) => {
   res.json(swaggerDocs);
 });
 
+// Create a WebSocket server for real-time updates
+const io = createWebSocketServer(server);
+
 app.use('/admin', adminRoutes);
 app.use('/stocks', stocksRoutes);
 app.use('/teacher', teacherRoutes);
 app.use('/user', userRoutes);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`http://localhost:${PORT}`);
 });
