@@ -2,9 +2,9 @@ const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const cors = require('cors');
-const favicon = require('serve-favicon')
+const favicon = require('serve-favicon');
 const http = require('http');
-const path = require('path')
+const path = require('path');
 
 require('dotenv').config();
 
@@ -18,7 +18,7 @@ const userRoutes = require('./routes/user');
 const app = express();
 const server = http.createServer(app);
 
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 const swaggerOptions = {
   definition: {
