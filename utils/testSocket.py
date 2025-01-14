@@ -22,7 +22,7 @@ def stockUpdateError(data):
 def main():
     try:
         # sio.connect('ws://localhost:3000', socketio_path='/socket.io/')
-        sio.connect('wss://isph-sse.vercel.app', socketio_path='/socket.io/', namespaces=['/'])
+        sio.connect('wss://isph-sse.vercel.app', socketio_path='/socket.io/')
         print('Trying to connect, waiting...')
         time.sleep(5)  # Wait to see if connection is successful
 
