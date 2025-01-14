@@ -5,7 +5,7 @@ const { ref, onValue } = require('firebase/database');
 
 function createWebSocketServer(server) {
   const io = socketIo(server, {
-    path: '/api/socket/',
+    path: '/socket.io/',
     cors: {
       origin: "*",
       methods: ["GET", "POST"]
