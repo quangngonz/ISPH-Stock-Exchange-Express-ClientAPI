@@ -11,17 +11,32 @@ const authenticateAndAuthorizeRole = require('../middleware/roleMiddleware');
 const router = express.Router();
 
 // Authenticating and authorizing admin
-router.post('/authenticate', authenticateAndAuthorizeRole('admin'), authenticateAdmin);
+router.post(
+  '/authenticate',
+  authenticateAndAuthorizeRole('admin'),
+  authenticateAdmin
+);
 
 // Route for approving an event
-router.post('/approve-event', authenticateAndAuthorizeRole('admin'), approveEvent);
+router.post(
+  '/approve-event',
+  authenticateAndAuthorizeRole('admin'),
+  approveEvent
+);
 
 // Route for setting an opening price
-router.post('/set-opening-price', authenticateAndAuthorizeRole('admin'), setOpeningPrice);
+router.post(
+  '/set-opening-price',
+  authenticateAndAuthorizeRole('admin'),
+  setOpeningPrice
+);
 
 // Route for adjusting volume
-router.post('/adjust-volume', authenticateAndAuthorizeRole('admin'), adjustVolume);
-
+router.post(
+  '/adjust-volume',
+  authenticateAndAuthorizeRole('admin'),
+  adjustVolume
+);
 
 // Export the router
 module.exports = router;
@@ -42,7 +57,7 @@ module.exports = router;
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
- *    requestBody:
+ *     requestBody:
  *       required: true
  *       content:
  *         application/json:
@@ -50,17 +65,17 @@ module.exports = router;
  *             type: object
  *             properties:
  *               userId:
- *               type: string
- *               description: The user ID of the admin.
+ *                 type: string
+ *                 description: The user ID of the admin.
  *             required:
  *               - userId
  *     responses:
  *       200:
  *         description: Admin authenticated successfully.
  *       400:
- *         description: "Invalid request: Missing token."
+ *         description: Invalid request: Missing token.
  *       500:
- *         description: "Failed to authenticate admin."
+ *         description: Failed to authenticate admin.
  */
 
 /**
