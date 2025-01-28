@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const { getUserPortfolio, getUserPortfolioHistory, checkIfUserExists, createUser } = require('../controllers/userController');
+const { getUserPortfolio, getUserPortfolioHistory, checkIfUserExists, createUser, getEvents} = require('../controllers/userController');
 const { getTransactions } = require('../controllers/transactionController');
 
 router.get('/transactions', getTransactions);
@@ -12,6 +12,8 @@ router.get('/portfolio-history/:userId?', getUserPortfolioHistory);
 
 router.get('/check-user/:userId', checkIfUserExists);
 router.post('/create-user', createUser);
+
+router.get('/get_events', getEvents);
 
 module.exports = router;
 

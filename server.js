@@ -14,6 +14,7 @@ const adminRoutes = require('./routes/admin');
 const stocksRoutes = require('./routes/stocks');
 const teacherRoutes = require('./routes/teacher');
 const userRoutes = require('./routes/user');
+const healthRoutes = require('./routes/health');
 
 const app = express();
 const server = http.createServer(app);
@@ -71,6 +72,7 @@ app.use('/admin', adminRoutes);
 app.use('/stocks', stocksRoutes);
 app.use('/teacher', teacherRoutes);
 app.use('/user', userRoutes);
+app.use('/health', healthRoutes);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

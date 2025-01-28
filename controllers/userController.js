@@ -130,4 +130,22 @@ const createUser = async (req, res) => {
   }
 }
 
-module.exports = { getUserPortfolio, getUserPortfolioHistory, checkIfUserExists, createUser};
+const getEvents = async (req, res) => {
+  const eventRef = ref(database, 'events');
+
+  try {
+    const snapshot = await get(eventRef);
+
+    if (!snapshot.exists()) {
+      return res.status(404).send('No events found');
+    }
+
+    const events = snapshot.val();
+    return res.json(events);
+  } catch (error) {
+    console.error('Error fetching events:', error.message);
+    return res.status(500).send('Failed to fetch events');
+  }
+}
+
+module.exports = { getUserPortfolio, getUserPortfolioHistory, checkIfUserExists, createUser, getEvents};
