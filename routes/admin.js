@@ -43,12 +43,12 @@ module.exports = router;
  *     security:
  *       - bearerAuth: []
  *     responses:
- *      200:
- *        description: Admin authenticated successfully.
- *      400:
- *        description: "Invalid request: Missing token."
+ *       200:
+ *         description: Admin authenticated successfully.
+ *       400:
+ *         description: "Invalid request: Missing token."
  *       500:
- *        description: "Failed to authenticate admin."
+ *         description: "Failed to authenticate admin."
  */
 
 /**
