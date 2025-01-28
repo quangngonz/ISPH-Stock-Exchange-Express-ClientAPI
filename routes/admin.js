@@ -53,7 +53,7 @@ module.exports = router;
  * /admin/authenticate:
  *   post:
  *     summary: Authenticates an admin
- *     description: Authenticate an admin using a Firebase token. This route requires admin authentication and authorization.
+ *     description: Authenticate an admin using a Firebase token.
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
