@@ -1,6 +1,17 @@
 const { admin, db } = require('../services/firebaseService');
 const { evaluateEvent } = require('../services/evaluateEventService');
 
+const authenticateAdmin = async (req, res) => {
+  res.send(
+    {
+      message: 'Admin authenticated successfully.',
+      authenticated: true,
+      user: req.user,
+
+    }
+  );
+}
+
 const approveEvent = async (req, res) => {
   const { eventId } = req.body;
 
@@ -65,4 +76,4 @@ const adjustVolume = async (req, res) => {
   }
 };
 
-module.exports = { approveEvent, setOpeningPrice, adjustVolume };
+module.exports = { authenticateAdmin, approveEvent, setOpeningPrice, adjustVolume };

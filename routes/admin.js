@@ -1,6 +1,7 @@
 const express = require('express');
 
 const {
+  authenticateAdmin,
   approveEvent,
   setOpeningPrice,
   adjustVolume,
@@ -8,6 +9,9 @@ const {
 const authenticateAndAuthorizeRole = require('../middleware/roleMiddleware');
 
 const router = express.Router();
+
+// Authenticating and authorizing admin
+router.post('/authenticate', authenticateAndAuthorizeRole('admin'), authenticateAdmin);
 
 // Route for approving an event
 router.post('/approve-event', authenticateAndAuthorizeRole('admin'), approveEvent);
@@ -18,6 +22,7 @@ router.post('/set-opening-price', authenticateAndAuthorizeRole('admin'), setOpen
 // Route for adjusting volume
 router.post('/adjust-volume', authenticateAndAuthorizeRole('admin'), adjustVolume);
 
+
 // Export the router
 module.exports = router;
 
@@ -26,6 +31,24 @@ module.exports = router;
  * tags:
  *   name: Admin
  *   description: Admin-specific actions for managing events and stock details.
+ */
+
+/**
+ * @swagger
+ * /admin/authenticate:
+ *   post:
+ *     summary: Authenticates an admin
+ *     description: Authenticate an admin using a Firebase token. This route requires admin authentication and authorization.
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *      200:
+ *        description: Admin authenticated successfully.
+ *      400:
+ *        description: "Invalid request: Missing token."
+ *       500:
+ *        description: "Failed to authenticate admin."
  */
 
 /**
