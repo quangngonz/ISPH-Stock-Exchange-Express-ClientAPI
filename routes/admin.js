@@ -42,6 +42,18 @@ module.exports = router;
  *     tags: [Admin]
  *     security:
  *       - bearerAuth: []
+ *    requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *               type: string
+ *               description: The user ID of the admin.
+ *             required:
+ *               - userId
  *     responses:
  *       200:
  *         description: Admin authenticated successfully.
