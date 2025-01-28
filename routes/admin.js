@@ -72,10 +72,6 @@ module.exports = router;
  *     responses:
  *       200:
  *         description: Admin authenticated successfully.
- *       400:
- *         description: Invalid request: Missing token.
- *       500:
- *         description: Failed to authenticate admin.
  */
 
 /**
