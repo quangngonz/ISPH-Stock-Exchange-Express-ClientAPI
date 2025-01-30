@@ -7,7 +7,7 @@ const {
   adjustVolume,
 } = require('../controllers/adminController');
 const authenticateAndAuthorizeRole = require('../middleware/roleMiddleware');
-const {getAllTransactions} = require("../controllers/adminDashboardController");
+const {getAllTransactions, getAllUsers} = require("../controllers/adminDashboardController");
 
 const router = express.Router();
 
@@ -25,6 +25,9 @@ router.post('/adjust-volume', authenticateAndAuthorizeRole('admin'), adjustVolum
 
 // Route for getting all transactions [No Authorization Required]
 router.get('/get-all-transactions', getAllTransactions);
+
+// Route for getting all users [No Authorization Required]
+router.get('/get-all-users', getAllUsers);
 
 // Export the router
 module.exports = router;
@@ -108,6 +111,39 @@ module.exports = router;
  *                         description: User's email.
  *       404:
  *         description: No transactions found.
+ */
+
+/**
+ * @swagger
+ * /admin/get-all-users:
+ *   get:
+ *     summary: Retrieve all users
+ *     description: Fetches all user from the database
+ *     tags: [Dashboard]
+ *     responses:
+ *       200:
+ *         description: A list of users.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   house:
+ *                     type: string
+ *                     description: House of the user.
+ *                   role:
+ *                     type: string
+ *                     description: Role of the user.
+ *                   user_id:
+ *                     type: string
+ *                     description: User ID.
+ *                   username:
+ *                     type: string
+ *                     description: User's name.
+ *       404:
+ *         description: No users found.
  */
 
 /**
