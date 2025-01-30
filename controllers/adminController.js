@@ -1,4 +1,4 @@
-const { admin, db } = require('../services/firebaseService');
+const { db } = require('../services/firebaseService');
 const { evaluateEvent } = require('../services/evaluateEventService');
 
 const authenticateAdmin = async (req, res) => {
@@ -42,7 +42,7 @@ const setOpeningPrice = async (req, res) => {
   }
 
   try {
-    await db.collection('Stocks').doc(stockTicker).update({
+    await db.ref(`stocks/${stockTicker}`).update({
       initial_price: price,
       current_price: price,
     });
@@ -63,12 +63,9 @@ const adjustVolume = async (req, res) => {
   }
 
   try {
-    await db
-      .collection('Stocks')
-      .doc(stockTicker)
-      .update({
-        volume_available: admin.firestore.FieldValue.increment(volumeChange),
-      });
+    await db.ref(`stocks/${stockTicker}`).update({
+      volume: volumeChange,
+    });
     res.send('Stock volume adjusted successfully.');
   } catch (err) {
     console.error(err);

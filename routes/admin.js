@@ -7,36 +7,24 @@ const {
   adjustVolume,
 } = require('../controllers/adminController');
 const authenticateAndAuthorizeRole = require('../middleware/roleMiddleware');
+const {getAllTransactions} = require("../controllers/adminDashboardController");
 
 const router = express.Router();
 
 // Authenticating and authorizing admin
-router.post(
-  '/authenticate',
-  authenticateAndAuthorizeRole('admin'),
-  authenticateAdmin
-);
+router.post('/authenticate', authenticateAndAuthorizeRole('admin'), authenticateAdmin);
 
 // Route for approving an event
-router.post(
-  '/approve-event',
-  authenticateAndAuthorizeRole('admin'),
-  approveEvent
-);
+router.post('/approve-event', authenticateAndAuthorizeRole('admin'), approveEvent);
 
 // Route for setting an opening price
-router.post(
-  '/set-opening-price',
-  authenticateAndAuthorizeRole('admin'),
-  setOpeningPrice
-);
+router.post('/set-opening-price', authenticateAndAuthorizeRole('admin'), setOpeningPrice);
 
 // Route for adjusting volume
-router.post(
-  '/adjust-volume',
-  authenticateAndAuthorizeRole('admin'),
-  adjustVolume
-);
+router.post('/adjust-volume', authenticateAndAuthorizeRole('admin'), adjustVolume);
+
+// Route for getting all transactions [No Authorization Required]
+router.get('/get-all-transactions', getAllTransactions);
 
 // Export the router
 module.exports = router;
@@ -46,6 +34,13 @@ module.exports = router;
  * tags:
  *   name: Admin
  *   description: Admin-specific actions for managing events and stock details.
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Dashboard
+ *   description: General actions for retrieving data for the admin dashboard.
  */
 
 /**
@@ -72,6 +67,47 @@ module.exports = router;
  *     responses:
  *       200:
  *         description: Admin authenticated successfully.
+ *       500:
+ *         description: "Failed to authenticate admin."
+ */
+
+/**
+ * @swagger
+ * /admin/get-all-transactions:
+ *   get:
+ *     summary: Retrieve all transactions
+ *     description: Fetches all transactions from the database, including user details, but removes user roles and IDs.
+ *     tags: [Dashboard]
+ *     responses:
+ *       200:
+ *         description: A list of transactions sorted by timestamp (newest first).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     description: Transaction ID.
+ *                   amount:
+ *                     type: number
+ *                     description: Transaction amount.
+ *                   timestamp:
+ *                     type: number
+ *                     description: Transaction timestamp.
+ *                   user:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                         description: User's name.
+ *                       email:
+ *                         type: string
+ *                         description: User's email.
+ *       404:
+ *         description: No transactions found.
  */
 
 /**
