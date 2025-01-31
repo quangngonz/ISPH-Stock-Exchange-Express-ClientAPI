@@ -7,7 +7,7 @@ const {
   adjustVolume,
 } = require('../controllers/adminController');
 const authenticateAndAuthorizeRole = require('../middleware/roleMiddleware');
-const {getAllTransactions, getAllUsers} = require("../controllers/adminDashboardController");
+const {getAllTransactions, getAllUsers, editUserData} = require("../controllers/adminDashboardController");
 
 const router = express.Router();
 
@@ -28,6 +28,9 @@ router.get('/get-all-transactions', getAllTransactions);
 
 // Route for getting all users [No Authorization Required]
 router.get('/get-all-users', getAllUsers);
+
+// Route for editing user data
+router.post('/edit-user-data', authenticateAndAuthorizeRole('admin'), editUserData);
 
 // Export the router
 module.exports = router;
