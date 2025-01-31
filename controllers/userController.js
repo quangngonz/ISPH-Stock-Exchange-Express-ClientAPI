@@ -114,7 +114,7 @@ const createUser = async (req, res) => {
 
   const userData = {
     user_id: userId,
-    full_name: userRecord.displayName,
+    full_name: userRecord?.displayName || `User ${userId}`,
     house: house,
     username: username || `User ${userId}`,
     role: 'student'
