@@ -120,9 +120,18 @@ const createUser = async (req, res) => {
     role: 'student'
   }
 
+  const blankPortfolio = {
+    items: [],
+    points_balance: 1000
+  }
+
   try {
     const userRef = ref(database, `users/${userId}`);
     await set(userRef, userData);
+
+    const portfolioRef = ref(database, `portfolios/${userId}`);
+    await set(portfolioRef, blankPortfolio);
+
     res.status(201).send('User created successfully');
   } catch (error) {
     console.error('Error creating user:', error.message);
