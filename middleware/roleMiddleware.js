@@ -14,7 +14,7 @@ const authenticateAndAuthorizeRole =
       // Verify the token using Firebase Admin
       const user = await admin.auth().verifyIdToken(token);
       req.user = user;
-      let userId = req.params.userId;
+      let userId = req.body.userId;
 
       if (userId && userId !== user.uid) {
         return res.status(403).send('Unauthorized: Invalid user ID.');
