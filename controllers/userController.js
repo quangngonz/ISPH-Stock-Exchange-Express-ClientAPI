@@ -127,9 +127,16 @@ const createUser = async (req, res) => {
 
   try {
     const userRef = ref(database, `users/${userId}`);
-    await set(userRef, userData);
+    const userSnapshot = await get(userRef);
 
     const portfolioRef = ref(database, `portfolios/${userId}`);
+    const portfolioSnapshot = await get(portfolioRef);
+
+    if (userSnapshot.exists() || portfolioSnapshot.exists()) {
+      return res.status(400).send('User already exists');
+    }
+
+    await set(userRef, userData);
     await set(portfolioRef, blankPortfolio);
 
     res.status(201).send('User created successfully');
