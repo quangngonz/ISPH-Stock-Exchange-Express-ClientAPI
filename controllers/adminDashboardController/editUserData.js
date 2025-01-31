@@ -8,7 +8,7 @@ const editUserData = async (req, res) => {
     return res.status(400).send('Invalid request: Missing user ID or data.');
   }
 
-  const userRef = ref(database, `users/${userId}`);
+  const userRef = ref(database, `users/${userData.user_id}`);
   const currentData = (await get(userRef)).val();
 
   // merge current data with new data
