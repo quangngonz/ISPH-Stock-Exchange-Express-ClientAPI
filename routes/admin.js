@@ -12,7 +12,7 @@ const {getAllTransactions, getAllUsers, editUserData} = require("../controllers/
 const router = express.Router();
 
 // Authenticating and authorizing admin
-router.post('/authenticate', authenticateAndAuthorizeRole('admin'), authenticateAdmin);
+router.post('/authenticate', authenticateAdmin);
 
 // Route for approving an event
 router.post('/approve-event', authenticateAndAuthorizeRole('admin'), approveEvent);
