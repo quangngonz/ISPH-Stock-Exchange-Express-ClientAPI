@@ -247,3 +247,38 @@ module.exports = router;
  *       500:
  *         description: "Failed to adjust volume."
  */
+
+/**
+ * @swagger
+ * /admin/edit-user-data:
+ *   post:
+ *     summary: Edit user data
+ *     description: Updates the specified user's data in Firebase Realtime Database. Only accessible by admins.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - userData
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: The unique identifier of the user.
+ *               userData:
+ *                 type: object
+ *                 description: The updated user data.
+ *     responses:
+ *       200:
+ *         description: User data updated successfully.
+ *       400:
+ *         description: Invalid request, missing user ID or data.
+ *       500:
+ *         description: Failed to update user data.
+ */
