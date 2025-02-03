@@ -1,18 +1,17 @@
 const express = require('express');
 
-const {
-  authenticateAdmin,
-  approveEvent,
-  setOpeningPrice,
-  adjustVolume,
-} = require('../controllers/adminController');
+const {authenticateAdmin, approveEvent, setOpeningPrice, adjustVolume} = require('../controllers/adminController');
 const authenticateAndAuthorizeRole = require('../middleware/roleMiddleware');
 const {getAllTransactions, getAllUsers, editUserData} = require("../controllers/adminDashboardController");
+const getAllEvents = require("../controllers/adminDashboardController/eventsAdmin");
 
 const router = express.Router();
 
 // Authenticating and authorizing admin
 router.post('/authenticate', authenticateAndAuthorizeRole('admin'), authenticateAdmin);
+
+// Route for getting all events
+router.get('/get-all-events', authenticateAndAuthorizeRole('admin'), getAllEvents);
 
 // Route for approving an event
 router.post('/approve-event', authenticateAndAuthorizeRole('admin'), approveEvent);
@@ -31,6 +30,7 @@ router.get('/get-all-users', getAllUsers);
 
 // Route for editing user data
 router.post('/edit-user-data', authenticateAndAuthorizeRole('admin'), editUserData);
+
 
 // Export the router
 module.exports = router;
@@ -270,7 +270,7 @@ module.exports = router;
  *             properties:
  *               userId:
  *                 type: string
- *                 description: The unique identifier of the user.
+ *                 description: The user ID of the admin.
  *               userData:
  *                 type: object
  *                 description: The updated user data.
