@@ -110,14 +110,15 @@ const checkIfUserExists = async (req, res) => {
 const createUser = async (req, res) => {
   const { userId, house, username } = req.body;
 
-  const userRecord = admin.auth().getUser(userId);
+  const userRecord = admin.auth()(userId);
 
   const userData = {
     user_id: userId,
     full_name: userRecord?.displayName || `User ${userId}`,
     house: house,
     username: username || `User ${userId}`,
-    role: 'student'
+    role: 'student',
+    email: userRecord?.email || `Email ${userId}`,
   }
 
   const blankPortfolio = {
