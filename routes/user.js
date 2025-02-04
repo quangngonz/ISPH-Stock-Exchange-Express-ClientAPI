@@ -4,6 +4,7 @@ const router = express.Router();
 
 const { getUserPortfolio, getUserPortfolioHistory, checkIfUserExists, createUser, getEvents} = require('../controllers/userController');
 const { getTransactions } = require('../controllers/transactionController');
+const { sendSuggestion } = require('../controllers/adminDashboardController/sendSuggestion');
 
 router.get('/transactions', getTransactions);
 
@@ -14,6 +15,8 @@ router.get('/check-user/:userId', checkIfUserExists);
 router.post('/create-user', createUser);
 
 router.get('/get_events', getEvents);
+
+router.post('/send-suggestion', sendSuggestion);
 
 module.exports = router;
 
