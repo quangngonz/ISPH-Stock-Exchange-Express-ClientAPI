@@ -1,26 +1,32 @@
 const nodemailer = require('nodemailer');
 
 require('dotenv').config();
-const { EMAIL, EMAIL_PASSWORD } = process.env;
+const { SMTP_SERVER, SMTP_PORT, SMTP_EMAIL, SMTP_PASSWORD } = process.env;
 
 const sendSuggestion = async (req, res) => {
   const { sender, suggestion } = req.body;
+
+  console.log('SMTP_SERVER:', SMTP_SERVER);
+  console.log('SMTP_PORT:', SMTP_PORT);
+  console.log('SMTP_EMAIL:', SMTP_EMAIL);
+  console.log('SMTP_PASSWORD:', SMTP_PASSWORD);
 
   if (!sender || !suggestion) {
     return res.status(400).send('Please provide both sender and suggestion.');
   }
 
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: SMTP_SERVER,
+    port: SMTP_PORT,
     auth: {
-      user: EMAIL,
-      pass: EMAIL_PASSWORD,
+      user: SMTP_EMAIL,
+      pass: SMTP_PASSWORD,
     },
   });
 
   const mailOptions = {
-    from: EMAIL,
-    to: EMAIL,
+    from: SMTP_EMAIL,
+    to: 'quang.n.student@isph.edu.vn',
     subject: `Suggestion from ${sender.name || sender.email}`,
     text: `Suggestion: ${suggestion} \n\n Sender: ${JSON.stringify(sender)}`,
   }
