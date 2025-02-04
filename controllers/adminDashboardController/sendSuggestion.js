@@ -6,11 +6,6 @@ const { SMTP_SERVER, SMTP_PORT, SMTP_EMAIL, SMTP_PASSWORD } = process.env;
 const sendSuggestion = async (req, res) => {
   const { sender, suggestion } = req.body;
 
-  console.log('SMTP_SERVER:', SMTP_SERVER);
-  console.log('SMTP_PORT:', SMTP_PORT);
-  console.log('SMTP_EMAIL:', SMTP_EMAIL);
-  console.log('SMTP_PASSWORD:', SMTP_PASSWORD);
-
   if (!sender || !suggestion) {
     return res.status(400).send('Please provide both sender and suggestion.');
   }
@@ -28,9 +23,8 @@ const sendSuggestion = async (req, res) => {
     from: SMTP_EMAIL,
     to: 'quang.n.student@isph.edu.vn',
     subject: `Suggestion from ${sender.name || sender.email}`,
-    text: `Suggestion: ${suggestion} \n\n Sender: ${JSON.stringify(sender)}`,
+    text: `Suggestion: ${suggestion} \n\n Sender: ${sender.name} - ${sender.userId} \n\n Email: ${sender.email}`,
   }
-
 
   try {
     await transporter.sendMail(mailOptions);
