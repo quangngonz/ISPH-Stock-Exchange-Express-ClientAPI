@@ -110,7 +110,8 @@ const checkIfUserExists = async (req, res) => {
 const createUser = async (req, res) => {
   const { userId, house, username } = req.body;
 
-  const userRecord = admin.auth(userId);
+  // Get the user record from Firebase Auth
+  const userRecord = await admin.auth().getUser(userId);
 
   const userData = {
     user_id: userId,
