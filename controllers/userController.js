@@ -110,7 +110,7 @@ const checkIfUserExists = async (req, res) => {
 const createUser = async (req, res) => {
   const { userId, house, username } = req.body;
 
-  const userRecord = admin.auth()(userId);
+  const userRecord = admin.auth(userId);
 
   const userData = {
     user_id: userId,
