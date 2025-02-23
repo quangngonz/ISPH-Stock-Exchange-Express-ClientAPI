@@ -50,6 +50,10 @@ app.use(express.json());
 const CSS_URL =
   'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css';
 
+// app.get('/api-docs/swagger.json', (req, res) => {
+//   res.json(swaggerDocs);
+// });
+
 app.get('/', (req, res) => res.redirect('/api-docs'));
 app.use(
   '/api-docs',
